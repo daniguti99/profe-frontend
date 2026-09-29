@@ -1,0 +1,14 @@
+.footer {
+    background-color: var(--color-ink);
+    padding: var(--space-6) var(--space-4);
+    margin-top: var(--space-16);
+}
+
+.footer-text {
+    max-width: 1280px;
+    margin: 0 auto;
+    font-family: var(--font-body);
+    font-size: var(--font-size-small);
+    color: var(--color-gray-300);
+    text-align: center;
+}

@@ -1,0 +1,39 @@
+:root {
+    /* Color */
+    --color-ink: #16233A;
+    --color-chalk: #F6F5F1;
+    --color-surface: #FFFFFF;
+    --color-action: #FF7A3C;
+    --color-turf: #2F9E6E;
+    --color-alert: #D93B3B;
+    --color-warning: #E0A100;
+    --color-gray-900: #1A1D23;
+    --color-gray-600: #6B7280;
+    --color-gray-300: #D1D5DB;
+    --color-gray-100: #F1F1EF;
+
+    /* Tipografía */
+    --font-heading: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-size-h1: 2.44rem;
+    --font-size-h2: 1.95rem;
+    --font-size-h3: 1.56rem;
+    --font-size-body: 1rem;
+    --font-size-small: 0.875rem;
+    --font-size-caption: 0.75rem;
+
+    /* Espaciado */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --space-16: 64px;
+
+    /* Radios */
+    --radius-input: 6px;
+    --radius-card: 8px;
+    --radius-pill: 999px;
+}

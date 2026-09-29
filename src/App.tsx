@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./App.css";
 import Profile from "./pages/Profile";
+import TeachingPanel from "./pages/TeachingPanel";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/teachingpanel" element={<TeachingPanel />} />
                 <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
             </Routes>
             <Footer />
