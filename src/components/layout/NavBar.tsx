@@ -1,10 +1,19 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "../../styles/navBar.css";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const { isAuthenticated, logout } = useAuth();
+    const navigate = useNavigate();
     const closeMenu = () => setIsOpen(false);
+
+    const handleLogout = () => {
+        logout();
+        closeMenu();
+        navigate("/");
+    };
 
     return (
         <header className="navbar">
@@ -36,36 +45,47 @@ export default function Navbar() {
                     >
                         Inicio
                     </NavLink>
-                    <NavLink
-                        to="/teachingpanel"
-                        className={({ isActive }) =>
-                            isActive ? "navbar-link navbar-link-active" : "navbar-link"
-                        }
-                        onClick={closeMenu}
-                    >
-                        Panel docente
-                    </NavLink>
-                    <NavLink
-                        to="/profile"
-                        className={({ isActive }) =>
-                            isActive ? "navbar-link navbar-link-active" : "navbar-link"
-                        }
-                        onClick={closeMenu}
-                    >
-                        Perfil
-                    </NavLink>
-                    <NavLink
-                        to="/login"
-                        className={({ isActive }) =>
-                            isActive ? "navbar-link navbar-link-active" : "navbar-link"
-                        }
-                        onClick={closeMenu}
-                    >
-                        Iniciar sesión
-                    </NavLink>
-                    <NavLink to="/register" className="navbar-cta" onClick={closeMenu}>
-                        Registrarse
-                    </NavLink>
+
+                    {isAuthenticated ? (
+                        <>
+                            <NavLink
+                                to="/panel"
+                                className={({ isActive }) =>
+                                    isActive ? "navbar-link navbar-link-active" : "navbar-link"
+                                }
+                                onClick={closeMenu}
+                            >
+                                Panel docente
+                            </NavLink>
+                            <NavLink
+                                to="/perfil"
+                                className={({ isActive }) =>
+                                    isActive ? "navbar-link navbar-link-active" : "navbar-link"
+                                }
+                                onClick={closeMenu}
+                            >
+                                Perfil
+                            </NavLink>
+                            <button className="navbar-logout" onClick={handleLogout}>
+                                Cerrar sesión
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <NavLink
+                                to="/login"
+                                className={({ isActive }) =>
+                                    isActive ? "navbar-link navbar-link-active" : "navbar-link"
+                                }
+                                onClick={closeMenu}
+                            >
+                                Iniciar sesión
+                            </NavLink>
+                            <NavLink to="/register" className="navbar-cta" onClick={closeMenu}>
+                                Registrarse
+                            </NavLink>
+                        </>
+                    )}
                 </nav>
             </div>
         </header>

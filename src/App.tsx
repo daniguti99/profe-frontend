@@ -7,21 +7,24 @@ import Register from "./pages/Register";
 import "./App.css";
 import Profile from "./pages/Profile";
 import TeachingPanel from "./pages/TeachingPanel";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
     return (
-        <BrowserRouter>
-            <Navbar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/teachingpanel" element={<TeachingPanel />} />
-                <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
-            </Routes>
-            <Footer />
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <Navbar />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/teachingpanel" element={<TeachingPanel />} />
+                    <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+                </Routes>
+                <Footer />
+            </BrowserRouter>
+        </AuthProvider>
     );
 }
 
