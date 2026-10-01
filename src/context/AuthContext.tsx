@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import { getCurrentUserRequest, type UserInfo } from "../services/authservice";
 
 const TOKEN_KEY = "profe_token";

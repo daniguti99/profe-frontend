@@ -120,7 +120,13 @@ export default function Login() {
 
         {/* RIGHT SIDE */}
         <div className="auth-right">
-          {/* Placeholder hasta tener una imagen de marca para esta zona */}
+          <div className="auth-right-pattern" />
+          <div className="auth-right-content">
+            <div className="auth-right-brand">ProFE</div>
+            <p className="auth-right-tagline">
+              Tu plataforma de aprendizaje. Conecta, crece y comparte conocimiento.
+            </p>
+          </div>
         </div>
 
       </div>

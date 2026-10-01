@@ -178,7 +178,13 @@ export default function Register() {
 
         {/* RIGHT SIDE */}
         <div className="auth-right">
-          {/* Placeholder hasta tener una imagen de marca para esta zona */}
+          <div className="auth-right-pattern" />
+          <div className="auth-right-content">
+            <div className="auth-right-brand">ProFE</div>
+            <p className="auth-right-tagline">
+              Únete a una comunidad de estudiantes y docentes que aprenden juntos.
+            </p>
+          </div>
         </div>
 
       </div>
