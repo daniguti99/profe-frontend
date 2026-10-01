@@ -71,9 +71,9 @@ export default function Login() {
             <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
 
               <div className="form-group">
-                <label>Email</label>
-                <input type="email" {...register("email")} disabled={loading} />
-                {errors.email && <span className="error">{errors.email.message}</span>}
+                <label>Email o nombre de usuario</label>
+                <input type="text" {...register("login")} disabled={loading} />
+                {errors.login && <span className="error">{errors.login.message}</span>}
               </div>
 
               <div className="form-group">
