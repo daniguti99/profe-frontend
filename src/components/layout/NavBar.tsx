@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/navBar.css";
 
@@ -9,10 +10,26 @@ export default function Navbar() {
     const navigate = useNavigate();
     const closeMenu = () => setIsOpen(false);
 
-    const handleLogout = () => {
-        logout();
-        closeMenu();
-        navigate("/");
+    const handleLogout = async () => {
+        const result = await Swal.fire({
+            title: "¿Cerrar sesión?",
+            text: "¿Estás seguro de que quieres salir de tu cuenta?",
+            icon: "question",
+            background: "#16233A",
+            color: "#F6F5F1",
+            confirmButtonColor: "#FF7A3C",
+            confirmButtonText: "Sí, cerrar sesión",
+            cancelButtonColor: "#3A4A5F",
+            cancelButtonText: "Cancelar",
+            showCancelButton: true,
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            logout();
+            closeMenu();
+            navigate("/");
+        }
     };
 
     return (
