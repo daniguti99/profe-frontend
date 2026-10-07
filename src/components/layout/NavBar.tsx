@@ -66,7 +66,7 @@ export default function Navbar() {
                     {isAuthenticated ? (
                         <>
                             <NavLink
-                                to="/panel"
+                                to="/teachingpanel"
                                 className={({ isActive }) =>
                                     isActive ? "navbar-link navbar-link-active" : "navbar-link"
                                 }
@@ -75,7 +75,7 @@ export default function Navbar() {
                                 Panel docente
                             </NavLink>
                             <NavLink
-                                to="/perfil"
+                                to="/profile"
                                 className={({ isActive }) =>
                                     isActive ? "navbar-link navbar-link-active" : "navbar-link"
                                 }
