@@ -77,3 +77,36 @@ export interface SessionResponse {
     sessions: Session[];
     message: string;
 }
+
+export interface CreateTeachingUnitResponse {
+    id: number;
+    userId: number;
+    courseId: number;
+    title: string;
+    description: string;
+    schedule: string;
+    notes: string;
+}
+
+export interface CreateSessionResponse {
+    id: number;
+    teachingUnitId: number;
+    userId: number;
+    title: string;
+    description: string;
+    materials: string;
+    totalDuration: string;
+    date: string;
+    warmUpTime: string;
+    warmUpDescription: string;
+    warmUpGraphicUrl: string | null;
+    warmUpObservations: string;
+    mainPartTime: string;
+    mainPartDescription: string;
+    mainPartGraphicUrl: string | null;
+    mainPartObservations: string;
+    coolDownTime: string;
+    coolDownDescription: string;
+    coolDownGraphicUrl: string | null;
+    coolDownObservations: string;
+}

@@ -1,0 +1,6 @@
+/* Reset mínimo global.
+   La navbar y el footer son fijos y se apoyan en los bordes del viewport,
+   por eso el body no debe tener margen por defecto. */
+body {
+    margin: 0;
+}

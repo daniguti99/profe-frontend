@@ -1,49 +1,56 @@
 import type {
   SessionResponse,
   TeachingUnitResponse,
+  CreateTeachingUnitResponse,
+  CreateSessionResponse,
 } from "../components/layout/interfaces/interfaces";
+
+import { authenticatedGet, authenticatedPost } from "./http";
 
 const URL_BASE_TEACHING_UNITS = "http://localhost:8080/api/teaching-units";
 const URL_BASE_SESSIONS = "http://localhost:8080/api/sessions";
 
-const TOKEN_KEY = "profe_token";
-
-async function authenticatedGet(url: string, errorMessage: string) {
-  const token = localStorage.getItem(TOKEN_KEY);
-
-  if (!token) {
-    throw new Error("Debes iniciar sesión para ver esta información.");
-  }
-
-  let response: Response;
-
-  try {
-    response = await fetch(url, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  } catch {
-    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
-  }
-
-  if (response.status === 403) {
-    throw new Error("Tu sesión ha caducado. Vuelve a iniciar sesión.");
-  }
-
-  if (!response.ok) {
-    throw new Error(errorMessage);
-  }
-
-  return await response.json();
-}
-
 export async function getTeachingUnitsRequest(): Promise<TeachingUnitResponse> {
-  return authenticatedGet(
+  return authenticatedGet<TeachingUnitResponse>(
     URL_BASE_TEACHING_UNITS,
     "Error al obtener las unidades didácticas"
   );
 }
 
 export async function getSessionsRequest(): Promise<SessionResponse> {
-  return authenticatedGet(URL_BASE_SESSIONS, "Error al obtener las sesiones");
+  return authenticatedGet<SessionResponse>(
+    URL_BASE_SESSIONS,
+    "Error al obtener las sesiones"
+  );
+}
+
+export async function createTeachingUnitRequest(
+  body: { courseId: number; title: string; description: string; schedule: string; notes: string }
+): Promise<CreateTeachingUnitResponse> {
+  return authenticatedPost<CreateTeachingUnitResponse>(URL_BASE_TEACHING_UNITS, body);
+}
+
+export async function createSessionRequest(
+  body: {
+    teachingUnitId: number;
+    title: string;
+    description: string;
+    materials: string;
+    totalDuration: string;
+    date: string;
+    warmUpTime: string;
+    warmUpDescription: string;
+    warmUpObservations: string;
+    mainPartTime: string;
+    mainPartDescription: string;
+    mainPartObservations: string;
+    coolDownTime: string;
+    coolDownDescription: string;
+    coolDownObservations: string;
+    warmUpGraphicUrl?: string | null;
+    mainPartGraphicUrl?: string | null;
+    coolDownGraphicUrl?: string | null;
+  }
+): Promise<CreateSessionResponse> {
+  return authenticatedPost<CreateSessionResponse>(URL_BASE_SESSIONS, body);
 }

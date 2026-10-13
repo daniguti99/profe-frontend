@@ -1,4 +1,6 @@
 import type { Session } from "../../components/layout/interfaces/interfaces";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 interface SessionsLevelProps {
   sessions: Session[];
@@ -10,9 +12,26 @@ interface SessionsLevelProps {
 }
 
 export default function SessionsLevel({ sessions, unitTitle, loading, error, onSelect, onRetry }: SessionsLevelProps) {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const teachingUnitId = sessions.length > 0 ? sessions[0].teachingUnitId : undefined;
+
+  // Botón "Crear sesión" - visible si hay sesión
+  const createSessionButton = isAuthenticated ? (
+    <button
+      key="create-session"
+      className="panel-card"
+      style={{ marginBottom: "var(--space-8)", borderLeftColor: "#FF7A3C" }}
+      onClick={() => navigate(`/teachingpanel/crear-sesion/${teachingUnitId}`)}
+    >
+      <span className="panel-card-kicker">Crear sesión</span>
+    </button>
+  ) : null;
+
   return (
     <section>
       <h2 className="panel-section-title">Sesiones de {unitTitle}</h2>
+      {createSessionButton}
       {loading && (
         <div className="panel-state">
           <p className="panel-state-text">Cargando sesiones...</p>

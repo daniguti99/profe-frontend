@@ -275,6 +275,7 @@ export default function TeachingPanel() {
         <UnitsLevel
           units={filteredUnits}
           courseName={selectedCourse.name}
+          courseId={selectedCourse.id}
           loading={loading.units}
           error={error.units}
           onSelect={handleUnitClick}

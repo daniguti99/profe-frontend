@@ -75,13 +75,13 @@ export default function Navbar() {
                                 Panel docente
                             </NavLink>
                             <NavLink
-                                to="/profile"
+                                to="/explorer"
                                 className={({ isActive }) =>
                                     isActive ? "navbar-link navbar-link-active" : "navbar-link"
                                 }
                                 onClick={closeMenu}
                             >
-                                Perfil
+                                Explorar
                             </NavLink>
                             <button className="navbar-logout" onClick={handleLogout}>
                                 Cerrar sesión

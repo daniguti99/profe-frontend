@@ -1,7 +1,26 @@
+:root {
+    /* Alto del footer fijo: se usa también para reservar su espacio */
+    --footer-height: var(--space-16);
+}
+
 .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    height: var(--footer-height);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
     background-color: var(--color-ink);
-    padding: var(--space-6) var(--space-4);
-    margin-top: var(--space-16);
+    border-top: 3px solid var(--color-action);
+    padding: 0 var(--space-4);
+}
+
+/* Reserva el alto del footer para que no tape el final del contenido */
+#root {
+    padding-bottom: var(--footer-height);
 }
 
 .footer-text {
