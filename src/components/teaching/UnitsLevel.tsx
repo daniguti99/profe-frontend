@@ -125,7 +125,6 @@ export default function UnitsLevel({ units, courseName, courseId, loading, error
               <button
                 className="panel-card-btn"
                 onClick={() => onSelect(unit)}
-                style={{ textAlign: "left", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, color: "inherit" }}
               >
                 <span className="panel-card-kicker">Unidad didáctica</span>
                 <span className="panel-card-title">{unit.title}</span>
