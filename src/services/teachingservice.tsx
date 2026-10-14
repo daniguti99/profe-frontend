@@ -3,9 +3,15 @@ import type {
   TeachingUnitResponse,
   CreateTeachingUnitResponse,
   CreateSessionResponse,
+  UpdateTeachingUnitRequest,
+  UpdateTeachingUnitResponse,
+  DeleteTeachingUnitResponse,
+  UpdateSessionRequest,
+  UpdateSessionResponse,
+  DeleteSessionResponse,
 } from "../components/layout/interfaces/interfaces";
 
-import { authenticatedGet, authenticatedPost } from "./http";
+import { authenticatedGet, authenticatedPost, authenticatedPatch, authenticatedDelete } from "./http";
 
 const URL_BASE_TEACHING_UNITS = "http://localhost:8080/api/teaching-units";
 const URL_BASE_SESSIONS = "http://localhost:8080/api/sessions";
@@ -53,4 +59,44 @@ export async function createSessionRequest(
   }
 ): Promise<CreateSessionResponse> {
   return authenticatedPost<CreateSessionResponse>(URL_BASE_SESSIONS, body);
+}
+
+export async function updateTeachingUnitRequest(
+  id: number,
+  body: UpdateTeachingUnitRequest
+): Promise<UpdateTeachingUnitResponse> {
+  return authenticatedPatch<UpdateTeachingUnitResponse>(
+    `${URL_BASE_TEACHING_UNITS}/${id}`,
+    body,
+    "Error al actualizar la unidad didáctica"
+  );
+}
+
+export async function deleteTeachingUnitRequest(
+  id: number
+): Promise<DeleteTeachingUnitResponse> {
+  return authenticatedDelete<DeleteTeachingUnitResponse>(
+    `${URL_BASE_TEACHING_UNITS}/${id}`,
+    "Error al eliminar la unidad didáctica"
+  );
+}
+
+export async function updateSessionRequest(
+  id: number,
+  body: UpdateSessionRequest
+): Promise<UpdateSessionResponse> {
+  return authenticatedPatch<UpdateSessionResponse>(
+    `${URL_BASE_SESSIONS}/${id}`,
+    body,
+    "Error al actualizar la sesión"
+  );
+}
+
+export async function deleteSessionRequest(
+  id: number
+): Promise<DeleteSessionResponse> {
+  return authenticatedDelete<DeleteSessionResponse>(
+    `${URL_BASE_SESSIONS}/${id}`,
+    "Error al eliminar la sesión"
+  );
 }

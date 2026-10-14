@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { getCyclesRequest, getCoursesRequest } from "../services/cycleservice";
 import { getTeachingUnitsRequest, getSessionsRequest } from "../services/teachingservice";
+
 import type {
   Cycle,
   Course,
@@ -33,6 +35,7 @@ interface ErrorState {
 
 export default function TeachingPanel() {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const [level, setLevel] = useState<Level>("cycles");
   const [cycles, setCycles] = useState<Cycle[]>([]);
@@ -141,6 +144,22 @@ export default function TeachingPanel() {
   const handleSessionClick = (session: Session, opener: HTMLElement) => {
     setSelectedSession(session);
     opener.focus();
+  };
+
+  const handleUnitDeleted = (unitId: number) => {
+    setUnits((prev) => prev.filter((u) => u.id !== unitId));
+  };
+
+  const handleSessionDeleted = (sessionId: number) => {
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+  };
+
+  const handleUnitEdit = (unit: TeachingUnit) => {
+    navigate(`/teachingpanel/editar-unidad/${unit.id}`);
+  };
+
+  const handleSessionEdit = (session: Session) => {
+    navigate(`/teachingpanel/editar-sesion/${session.id}`);
   };
 
   const filteredCourses = selectedCycle
@@ -280,6 +299,8 @@ export default function TeachingPanel() {
           error={error.units}
           onSelect={handleUnitClick}
           onRetry={retryUnits}
+          onDeleted={handleUnitDeleted}
+          onEdit={handleUnitEdit}
         />
       )}
 
@@ -291,6 +312,8 @@ export default function TeachingPanel() {
           error={error.sessions}
           onSelect={handleSessionClick}
           onRetry={retrySessions}
+          onDeleted={handleSessionDeleted}
+          onEdit={handleSessionEdit}
         />
       )}
 

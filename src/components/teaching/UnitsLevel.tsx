@@ -1,6 +1,8 @@
 import type { TeachingUnit } from "../../components/layout/interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import Swal from "sweetalert2";
+import { deleteTeachingUnitRequest } from "../../services/teachingservice";
 
 interface UnitsLevelProps {
   units: TeachingUnit[];
@@ -10,15 +12,14 @@ interface UnitsLevelProps {
   error: string;
   onSelect: (unit: TeachingUnit) => void;
   onRetry: () => void;
+  onDeleted: (unitId: number) => void;
+  onEdit: (unit: TeachingUnit) => void;
 }
 
-export default function UnitsLevel({ units, courseName, courseId, loading, error, onSelect, onRetry }: UnitsLevelProps) {
+export default function UnitsLevel({ units, courseName, courseId, loading, error, onSelect, onRetry, onDeleted, onEdit }: UnitsLevelProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Botón "Crear unidad didáctica" - siempre visible si hay sesión autenticada
-  // El courseId viene de la ruta y se pasa desde TeachingPanel
-  // El courseName se muestra en el título de la sección
   const createUnitButton = isAuthenticated ? (
     <button
       key="create-unit"
@@ -29,6 +30,45 @@ export default function UnitsLevel({ units, courseName, courseId, loading, error
       <span className="panel-card-kicker">Crear unidad didáctica</span>
     </button>
   ) : null;
+
+  const handleDelete = async (unit: TeachingUnit) => {
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Se borrará la unidad didáctica y todas sus sesiones. Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#FF7A3C",
+      confirmButtonText: "Sí, borrar",
+      cancelButtonText: "Cancelar",
+      background: "#16233A",
+      color: "#F6F5F1",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteTeachingUnitRequest(unit.id);
+        onDeleted(unit.id);
+        await Swal.fire({
+          title: "Unidad didáctica eliminada",
+          text: "Se ha eliminado correctamente la unidad didáctica.",
+          icon: "success",
+          confirmButtonColor: "#FF7A3C",
+          background: "#16233A",
+          color: "#F6F5F1",
+        });
+      } catch (err: any) {
+        await Swal.fire({
+          title: "Error",
+          text: err.message || "Error al eliminar la unidad didáctica",
+          icon: "error",
+          confirmButtonColor: "#FF7A3C",
+          background: "#16233A",
+          color: "#F6F5F1",
+        });
+      }
+    }
+  };
 
   return (
     <section>
@@ -57,17 +97,43 @@ export default function UnitsLevel({ units, courseName, courseId, loading, error
       {!loading && !error && units.length > 0 && (
         <div className="panel-grid">
           {units.map((unit) => (
-            <button
+            <div
               key={unit.id}
               className="panel-card"
-              onClick={() => onSelect(unit)}
+              style={{ position: "relative" }}
             >
-              <span className="panel-card-kicker">Unidad didáctica</span>
-              <span className="panel-card-title">{unit.title}</span>
-              {unit.description && (
-                <span className="panel-card-desc">{unit.description}</span>
+              {isAuthenticated && (
+                <div className="panel-card-actions">
+                  <button
+                    className="panel-action-btn panel-action-edit"
+                    onClick={(e) => { e.stopPropagation(); onEdit(unit); }}
+                    aria-label={`Editar unidad ${unit.title}`}
+                    title="Editar"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="panel-action-btn panel-action-delete"
+                    onClick={(e) => { e.stopPropagation(); handleDelete(unit); }}
+                    aria-label={`Borrar unidad ${unit.title}`}
+                    title="Borrar"
+                  >
+                    🗑
+                  </button>
+                </div>
               )}
-            </button>
+              <button
+                className="panel-card-btn"
+                onClick={() => onSelect(unit)}
+                style={{ textAlign: "left", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, color: "inherit" }}
+              >
+                <span className="panel-card-kicker">Unidad didáctica</span>
+                <span className="panel-card-title">{unit.title}</span>
+                {unit.description && (
+                  <span className="panel-card-desc">{unit.description}</span>
+                )}
+              </button>
+            </div>
           ))}
         </div>
       )}

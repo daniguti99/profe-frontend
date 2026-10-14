@@ -43,6 +43,7 @@ export interface TeachingUnit {
     description: string | null;
     schedule: string | null;
     notes: string | null;
+    active: boolean;
 }
 
 export interface TeachingUnitResponse {
@@ -71,6 +72,7 @@ export interface Session {
     coolDownDescription: string | null;
     coolDownGraphicUrl: string | null;
     coolDownObservations: string | null;
+    active: boolean;
 }
 
 export interface SessionResponse {
@@ -109,4 +111,52 @@ export interface CreateSessionResponse {
     coolDownDescription: string;
     coolDownGraphicUrl: string | null;
     coolDownObservations: string;
+    active: boolean;
+}
+
+export interface UpdateSessionRequest {
+    title?: string;
+    description?: string;
+    materials?: string;
+    totalDuration?: string;
+    date?: string;
+    warmUpTime?: string;
+    warmUpDescription?: string;
+    warmUpGraphicUrl?: string | null;
+    warmUpObservations?: string;
+    mainPartTime?: string;
+    mainPartDescription?: string;
+    mainPartGraphicUrl?: string | null;
+    mainPartObservations?: string;
+    coolDownTime?: string;
+    coolDownDescription?: string;
+    coolDownGraphicUrl?: string | null;
+    coolDownObservations?: string;
+}
+
+export interface UpdateSessionResponse {
+    message: string;
+    session: Session;
+}
+
+export interface DeleteSessionResponse {
+    message: string;
+    session: Session;
+}
+
+export interface UpdateTeachingUnitRequest {
+    title?: string;
+    description?: string;
+    schedule?: string;
+    notes?: string;
+}
+
+export interface UpdateTeachingUnitResponse {
+    message: string;
+    teachingUnit: TeachingUnit;
+}
+
+export interface DeleteTeachingUnitResponse {
+    message: string;
+    teachingUnit: TeachingUnit;
 }

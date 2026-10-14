@@ -76,3 +76,24 @@ export async function authenticatedPost<T>(
   });
   return parseResponse<T>(response, errorMessage);
 }
+
+export async function authenticatedPatch<T>(
+  url: string,
+  body: object,
+  errorMessage: string = "Error en la actualización del recurso"
+): Promise<T> {
+  const response = await fetchWithToken(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return parseResponse<T>(response, errorMessage);
+}
+
+export async function authenticatedDelete<T>(
+  url: string,
+  errorMessage: string = "Error al eliminar el recurso"
+): Promise<T> {
+  const response = await fetchWithToken(url, { method: "DELETE" });
+  return parseResponse<T>(response, errorMessage);
+}

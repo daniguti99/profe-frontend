@@ -251,6 +251,69 @@
     outline-offset: 2px;
 }
 
+/* Botones de acción (editar/borrar) en tarjetas y tabla */
+
+.panel-card-actions {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    display: flex;
+    gap: var(--space-2);
+}
+
+.panel-action-btn {
+    font-family: var(--font-body);
+    font-size: var(--font-size-small);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background-color: var(--color-surface);
+    padding: 0;
+}
+
+.panel-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(22, 35, 58, 0.15);
+}
+
+.panel-action-btn:focus-visible {
+    outline: 2px solid var(--color-action);
+    outline-offset: 2px;
+}
+
+.panel-action-edit {
+    color: var(--color-action);
+    border-color: var(--color-action);
+}
+
+.panel-action-edit:hover {
+    background-color: var(--color-action);
+    color: var(--color-ink);
+}
+
+.panel-action-delete {
+    color: var(--color-alert);
+    border-color: var(--color-alert);
+}
+
+.panel-action-delete:hover {
+    background-color: var(--color-alert);
+    color: var(--color-surface);
+}
+
+.panel-table-actions {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
 /* Popup de detalle de sesión */
 
 .session-modal-overlay {
