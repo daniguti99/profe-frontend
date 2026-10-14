@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
-import type { Session } from "../../components/layout/interfaces/interfaces";
+import { useEffect, useRef, useState } from "react";
+import Swal from "sweetalert2";
+import type { PublicSessionInfo, Session } from "../../components/layout/interfaces/interfaces";
 
 const SESSION_FIELDS: { key: keyof Session; label: string }[] = [
   { key: "title", label: "Título" },
@@ -24,10 +25,23 @@ const SESSION_FIELDS: { key: keyof Session; label: string }[] = [
 interface SessionModalProps {
   session: Session;
   onClose: () => void;
+  /**
+   * Datos de lectura de una sesión pública (autor y contadores). Su presencia
+   * activa el modo público: oculta los gráficos, muestra el autor y las
+   * métricas, y sustituye el botón de visibilidad por la descarga a PDF.
+   */
+  publicInfo?: PublicSessionInfo;
+  /**
+   * Solo en modo propietario: cambia la visibilidad de la sesión propia. Se
+   * llama únicamente después de que el usuario confirme.
+   */
+  onVisibilityChange?: (isPublic: boolean) => void | Promise<void>;
 }
 
-export default function SessionModal({ session, onClose }: SessionModalProps) {
+export default function SessionModal({ session, onClose, publicInfo, onVisibilityChange }: SessionModalProps) {
   const openerRef = useRef<HTMLElement | null>(null);
+  const [saving, setSaving] = useState(false);
+  const esPublico = Boolean(publicInfo);
 
   useEffect(() => {
     openerRef.current = document.activeElement as HTMLElement;
@@ -49,10 +63,58 @@ export default function SessionModal({ session, onClose }: SessionModalProps) {
     openerRef.current?.focus();
   };
 
+  const handleVisibility = async () => {
+    if (!onVisibilityChange) return;
+
+    const hacerPublica = !session.isPublic;
+    const result = await Swal.fire({
+      title: hacerPublica ? "¿Publicar esta sesión?" : "¿Despublicar esta sesión?",
+      text: hacerPublica
+        ? "La sesión pasará a estar visible para el resto de usuarios en Explorar."
+        : "La sesión dejará de aparecer en Explorar y volverá a ser privada.",
+      icon: "question",
+      background: "#16233A",
+      color: "#F6F5F1",
+      confirmButtonColor: "#FF7A3C",
+      confirmButtonText: hacerPublica ? "Sí, publicar" : "Sí, despublicar",
+      cancelButtonColor: "#3A4A5F",
+      cancelButtonText: "Cancelar",
+      showCancelButton: true,
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    setSaving(true);
+    try {
+      await onVisibilityChange(hacerPublica);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // En modo público no se muestran los gráficos (son URLs internas).
+  const visible = (fields: typeof SESSION_FIELDS) =>
+    esPublico ? fields.filter((f) => !f.key.toString().endsWith("GraphicUrl")) : fields;
+
   const generalFields = SESSION_FIELDS.slice(0, 5);
   const warmUpFields = SESSION_FIELDS.slice(5, 9);
   const mainPartFields = SESSION_FIELDS.slice(9, 13);
   const coolDownFields = SESSION_FIELDS.slice(13, 17);
+
+  const renderGroup = (title: string, fields: typeof SESSION_FIELDS) => (
+    <div className="session-modal-group">
+      <h4 className="session-modal-group-title">{title}</h4>
+      <dl className="session-modal-fields">
+        {visible(fields).map((field) => (
+          <div key={field.key} className="session-modal-field">
+            <dt className="session-modal-label">{field.label}</dt>
+            <dd className="session-modal-value">{session[field.key] ?? "—"}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
 
   return (
     <div className="session-modal-overlay" onClick={handleOverlayClick}>
@@ -74,61 +136,63 @@ export default function SessionModal({ session, onClose }: SessionModalProps) {
             ✕
           </button>
         </div>
+
+        {publicInfo && (
+          <div className="session-modal-meta">
+            <div className="session-modal-author">
+              {publicInfo.author.photo ? (
+                <img
+                  className="session-modal-author-photo"
+                  src={publicInfo.author.photo}
+                  alt=""
+                />
+              ) : (
+                <span className="session-modal-author-initial" aria-hidden="true">
+                  {publicInfo.author.username.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <span className="session-modal-author-name">
+                {publicInfo.author.username}
+              </span>
+            </div>
+            <div className="session-modal-stats">
+              <span className="session-modal-stat">{publicInfo.views} vistas</span>
+              <span className="session-modal-stat">{publicInfo.downloads} descargas</span>
+            </div>
+          </div>
+        )}
+
         <div className="session-modal-body">
-          <div className="session-modal-group">
-            <h4 className="session-modal-group-title">Información general</h4>
-            <dl className="session-modal-fields">
-              {generalFields.map((field) => (
-                <div key={field.key} className="session-modal-field">
-                  <dt className="session-modal-label">{field.label}</dt>
-                  <dd className="session-modal-value">
-                    {session[field.key] ?? "—"}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <div className="session-modal-group">
-            <h4 className="session-modal-group-title">Calentamiento</h4>
-            <dl className="session-modal-fields">
-              {warmUpFields.map((field) => (
-                <div key={field.key} className="session-modal-field">
-                  <dt className="session-modal-label">{field.label}</dt>
-                  <dd className="session-modal-value">
-                    {session[field.key] ?? "—"}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <div className="session-modal-group">
-            <h4 className="session-modal-group-title">Parte principal</h4>
-            <dl className="session-modal-fields">
-              {mainPartFields.map((field) => (
-                <div key={field.key} className="session-modal-field">
-                  <dt className="session-modal-label">{field.label}</dt>
-                  <dd className="session-modal-value">
-                    {session[field.key] ?? "—"}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-          <div className="session-modal-group">
-            <h4 className="session-modal-group-title">Vuelta a la calma</h4>
-            <dl className="session-modal-fields">
-              {coolDownFields.map((field) => (
-                <div key={field.key} className="session-modal-field">
-                  <dt className="session-modal-label">{field.label}</dt>
-                  <dd className="session-modal-value">
-                    {session[field.key] ?? "—"}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+          {renderGroup("Información general", generalFields)}
+          {renderGroup("Calentamiento", warmUpFields)}
+          {renderGroup("Parte principal", mainPartFields)}
+          {renderGroup("Vuelta a la calma", coolDownFields)}
         </div>
+
         <div className="session-modal-footer">
+          {publicInfo ? (
+            <button
+              className="session-modal-download"
+              disabled
+              title="Próximamente"
+            >
+              Descargar PDF (próximamente)
+            </button>
+          ) : (
+            onVisibilityChange && (
+              <button
+                className={`session-modal-visibility ${session.isPublic ? "session-modal-visibility-danger" : ""}`}
+                onClick={handleVisibility}
+                disabled={saving}
+              >
+                {saving
+                  ? "Guardando..."
+                  : session.isPublic
+                    ? "Despublicar"
+                    : "Publicar"}
+              </button>
+            )
+          )}
           <button className="session-modal-done" onClick={handleClose}>
             Cerrar
           </button>

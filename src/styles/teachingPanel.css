@@ -469,6 +469,9 @@
     border-top: 1px solid var(--color-gray-300);
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
 }
 
 .session-modal-done {
@@ -487,8 +490,127 @@
     transform: translateY(-1px);
 }
 
+/* Botón de visibilidad (modo propietario) y descarga deshabilitada (modo público) */
+
+.session-modal-visibility,
+.session-modal-download {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--font-size-body);
+    border-radius: var(--radius-pill);
+    padding: var(--space-2) var(--space-6);
+}
+
+.session-modal-visibility {
+    color: var(--color-ink);
+    background-color: var(--color-turf);
+    border: none;
+    cursor: pointer;
+}
+
+.session-modal-visibility:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.session-modal-visibility:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.session-modal-visibility-danger {
+    color: var(--color-surface);
+    background-color: var(--color-alert);
+}
+
+.session-modal-download {
+    color: var(--color-gray-600);
+    background-color: var(--color-gray-100);
+    border: 1px solid var(--color-gray-300);
+    cursor: not-allowed;
+}
+
+/* Metadatos de la sesión pública: autor y contadores */
+
+.session-modal-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-6);
+    border-bottom: 1px solid var(--color-gray-300);
+    background-color: var(--color-gray-100);
+}
+
+.session-modal-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.session-modal-author-photo,
+.session-modal-author-initial {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
+}
+
+.session-modal-author-photo {
+    object-fit: cover;
+}
+
+.session-modal-author-initial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-ink);
+    color: var(--color-chalk);
+    font-weight: 600;
+    font-size: var(--font-size-small);
+}
+
+.session-modal-author-name {
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+.session-modal-stats {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--font-size-small);
+    color: var(--color-gray-600);
+}
+
+/* Badge de visibilidad de la sesión en el panel */
+
+.panel-badge {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: var(--font-size-caption);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+}
+
+.panel-badge-public {
+    color: var(--color-surface);
+    background-color: var(--color-turf);
+}
+
+.panel-badge-private {
+    color: var(--color-gray-600);
+    background-color: var(--color-gray-100);
+    border: 1px solid var(--color-gray-300);
+}
+
 .session-modal-close:focus-visible,
 .session-modal-done:focus-visible,
+.session-modal-visibility:focus-visible,
 .panel-retry:focus-visible {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
@@ -514,5 +636,14 @@
     .session-modal-field {
         grid-template-columns: 1fr;
         gap: var(--space-1);
+    }
+
+    .session-modal-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .session-modal-footer {
+        justify-content: flex-end;
     }
 }

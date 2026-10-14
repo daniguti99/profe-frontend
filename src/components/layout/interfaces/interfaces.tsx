@@ -73,6 +73,8 @@ export interface Session {
     coolDownGraphicUrl: string | null;
     coolDownObservations: string | null;
     active: boolean;
+    isPublic: boolean;
+    publishedAt: string | null;
 }
 
 export interface SessionResponse {
@@ -159,4 +161,55 @@ export interface UpdateTeachingUnitResponse {
 export interface DeleteTeachingUnitResponse {
     message: string;
     teachingUnit: TeachingUnit;
+}
+
+/** Autor de una sesión pública: solo los datos que expone el backend. */
+export interface Author {
+    id: number;
+    username: string;
+    photo: string | null;
+}
+
+/** Orden del catálogo público; coincide con los valores del backend. */
+export type PublicSessionSort = "recent" | "oldest" | "downloads" | "views";
+
+/** Resumen de una sesión pública tal y como aparece en el listado. */
+export interface PublicSessionSummary {
+    id: number;
+    title: string;
+    description: string | null;
+    date: string | null;
+    publishedAt: string | null;
+    views: number;
+    downloads: number;
+    author: Author;
+}
+
+/** Detalle de una sesión pública: todos los campos de la sesión más autor y contadores. */
+export interface PublicSession extends Session {
+    views: number;
+    downloads: number;
+    author: Author;
+}
+
+/** Datos de lectura de una sesión pública que necesita el modal en modo público. */
+export type PublicSessionInfo = Pick<PublicSession, "author" | "views" | "downloads">;
+
+export interface PublicSessionsResponse {
+    sessions: PublicSessionSummary[];
+    message: string;
+}
+
+export interface PublicSessionDetailResponse {
+    message: string;
+    session: PublicSession;
+}
+
+export interface UpdateSessionVisibilityRequest {
+    isPublic: boolean;
+}
+
+export interface UpdateSessionVisibilityResponse {
+    message: string;
+    session: Session;
 }

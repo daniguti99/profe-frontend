@@ -9,12 +9,17 @@ import type {
   UpdateSessionRequest,
   UpdateSessionResponse,
   DeleteSessionResponse,
+  PublicSessionSort,
+  PublicSessionsResponse,
+  PublicSessionDetailResponse,
+  UpdateSessionVisibilityResponse,
 } from "../components/layout/interfaces/interfaces";
 
 import { authenticatedGet, authenticatedPost, authenticatedPatch, authenticatedDelete } from "./http";
 
 const URL_BASE_TEACHING_UNITS = "http://localhost:8080/api/teaching-units";
 const URL_BASE_SESSIONS = "http://localhost:8080/api/sessions";
+const URL_BASE_PUBLIC_SESSIONS = "http://localhost:8080/api/public-sessions";
 
 export async function getTeachingUnitsRequest(): Promise<TeachingUnitResponse> {
   return authenticatedGet<TeachingUnitResponse>(
@@ -98,5 +103,34 @@ export async function deleteSessionRequest(
   return authenticatedDelete<DeleteSessionResponse>(
     `${URL_BASE_SESSIONS}/${id}`,
     "Error al eliminar la sesión"
+  );
+}
+
+export async function updateSessionVisibilityRequest(
+  id: number,
+  isPublic: boolean
+): Promise<UpdateSessionVisibilityResponse> {
+  return authenticatedPatch<UpdateSessionVisibilityResponse>(
+    `${URL_BASE_SESSIONS}/${id}/visibility`,
+    { isPublic },
+    "Error al cambiar la visibilidad de la sesión"
+  );
+}
+
+export async function getPublicSessionsRequest(
+  sort: PublicSessionSort
+): Promise<PublicSessionsResponse> {
+  return authenticatedGet<PublicSessionsResponse>(
+    `${URL_BASE_PUBLIC_SESSIONS}?sort=${sort}`,
+    "Error al obtener las sesiones públicas"
+  );
+}
+
+export async function getPublicSessionRequest(
+  id: number
+): Promise<PublicSessionDetailResponse> {
+  return authenticatedGet<PublicSessionDetailResponse>(
+    `${URL_BASE_PUBLIC_SESSIONS}/${id}`,
+    "Error al obtener la sesión pública"
   );
 }

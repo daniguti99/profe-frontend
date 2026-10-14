@@ -100,6 +100,7 @@ export default function SessionsLevel({ sessions, unitTitle, loading, error, onS
             <thead>
               <tr>
                 <th>Título</th>
+                <th>Visibilidad</th>
                 {isAuthenticated && <th>Acciones</th>}
               </tr>
             </thead>
@@ -113,6 +114,13 @@ export default function SessionsLevel({ sessions, unitTitle, loading, error, onS
                     >
                       {session.title || "(sin título)"}
                     </button>
+                  </td>
+                  <td>
+                    <span
+                      className={`panel-badge ${session.isPublic ? "panel-badge-public" : "panel-badge-private"}`}
+                    >
+                      {session.isPublic ? "Pública" : "Privada"}
+                    </span>
                   </td>
                   {isAuthenticated && (
                     <td>

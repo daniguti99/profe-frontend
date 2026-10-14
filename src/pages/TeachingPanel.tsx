@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import { getCyclesRequest, getCoursesRequest } from "../services/cycleservice";
-import { getTeachingUnitsRequest, getSessionsRequest } from "../services/teachingservice";
+import {
+  getTeachingUnitsRequest,
+  getSessionsRequest,
+  updateSessionVisibilityRequest,
+} from "../services/teachingservice";
 
 import type {
   Cycle,
@@ -160,6 +165,37 @@ export default function TeachingPanel() {
 
   const handleSessionEdit = (session: Session) => {
     navigate(`/teachingpanel/editar-sesion/${session.id}`);
+  };
+
+  const handleSessionVisibilityChange = async (isPublic: boolean) => {
+    if (!selectedSession) return;
+
+    try {
+      const response = await updateSessionVisibilityRequest(selectedSession.id, isPublic);
+      setSessions((prev) =>
+        prev.map((s) => (s.id === response.session.id ? response.session : s))
+      );
+      setSelectedSession(response.session);
+      await Swal.fire({
+        title: isPublic ? "Sesión publicada" : "Sesión despublicada",
+        text: isPublic
+          ? "Tu sesión ya es visible para el resto de usuarios."
+          : "Tu sesión ha vuelto a ser privada.",
+        icon: "success",
+        confirmButtonColor: "#FF7A3C",
+        background: "#16233A",
+        color: "#F6F5F1",
+      });
+    } catch (err: any) {
+      await Swal.fire({
+        title: "Error",
+        text: err.message || "No se pudo cambiar la visibilidad de la sesión",
+        icon: "error",
+        confirmButtonColor: "#FF7A3C",
+        background: "#16233A",
+        color: "#F6F5F1",
+      });
+    }
   };
 
   const filteredCourses = selectedCycle
@@ -321,6 +357,7 @@ export default function TeachingPanel() {
         <SessionModal
           session={selectedSession}
           onClose={() => setSelectedSession(null)}
+          onVisibilityChange={handleSessionVisibilityChange}
         />
       )}
     </div>
