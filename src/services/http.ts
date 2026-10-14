@@ -1,5 +1,5 @@
 /**
- * Helpers compartidos para peticiones autenticadas.
+ * Utilidades compartidas de sesión para las peticiones autenticadas.
  *
  * Centraliza la lectura del token y el cierre de sesión cuando el backend
  * lo rechaza (401/403), de modo que cualquier servicio que detecte una
@@ -27,73 +27,8 @@ export function expireSession(): never {
 }
 
 /** Devuelve el token almacenado o cierra la sesión si no existe. */
-function requireToken(): string {
+export function getAuthToken(): string {
   const token = localStorage.getItem(TOKEN_KEY);
   if (!token) return expireSession();
   return token;
-}
-
-async function fetchWithToken(url: string, init: RequestInit): Promise<Response> {
-  const token = requireToken();
-
-  try {
-    return await fetch(url, {
-      ...init,
-      headers: { ...init.headers, Authorization: `Bearer ${token}` },
-    });
-  } catch {
-    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
-  }
-}
-
-async function parseResponse<T>(response: Response, fallbackMessage: string): Promise<T> {
-  if (response.status === 401 || response.status === 403) {
-    expireSession();
-  }
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    throw new Error(errorData?.error ?? fallbackMessage);
-  }
-
-  return (await response.json()) as T;
-}
-
-export async function authenticatedGet<T>(url: string, errorMessage: string): Promise<T> {
-  const response = await fetchWithToken(url, { method: "GET" });
-  return parseResponse<T>(response, errorMessage);
-}
-
-export async function authenticatedPost<T>(
-  url: string,
-  body: object,
-  errorMessage: string = "Error en la creación del recurso"
-): Promise<T> {
-  const response = await fetchWithToken(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  return parseResponse<T>(response, errorMessage);
-}
-
-export async function authenticatedPatch<T>(
-  url: string,
-  body: object,
-  errorMessage: string = "Error en la actualización del recurso"
-): Promise<T> {
-  const response = await fetchWithToken(url, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  return parseResponse<T>(response, errorMessage);
-}
-
-export async function authenticatedDelete<T>(
-  url: string,
-  errorMessage: string = "Error al eliminar el recurso"
-): Promise<T> {
-  const response = await fetchWithToken(url, { method: "DELETE" });
-  return parseResponse<T>(response, errorMessage);
 }

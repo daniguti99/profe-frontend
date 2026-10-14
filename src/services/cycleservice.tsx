@@ -1,14 +1,70 @@
 import type { Cycle, Course } from "../components/layout/interfaces/interfaces";
 
-import { authenticatedGet } from "./http";
+import { expireSession, getAuthToken } from "./http";
 
 const URL_BASE_CYCLES = "http://localhost:8080/api/cycles";
 const URL_BASE_COURSES = "http://localhost:8080/api/courses";
 
 export async function getCyclesRequest(): Promise<Cycle[]> {
-  return authenticatedGet<Cycle[]>(URL_BASE_CYCLES, "Error al obtener los ciclos");
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(URL_BASE_CYCLES, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al obtener los ciclos");
+  }
+
+  return await response.json();
 }
 
 export async function getCoursesRequest(): Promise<Course[]> {
-  return authenticatedGet<Course[]>(URL_BASE_COURSES, "Error al obtener los cursos");
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(URL_BASE_COURSES, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al obtener los cursos");
+  }
+
+  return await response.json();
 }

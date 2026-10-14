@@ -15,122 +15,410 @@ import type {
   UpdateSessionVisibilityResponse,
 } from "../components/layout/interfaces/interfaces";
 
-import { authenticatedGet, authenticatedPost, authenticatedPatch, authenticatedDelete } from "./http";
+import { expireSession, getAuthToken } from "./http";
 
 const URL_BASE_TEACHING_UNITS = "http://localhost:8080/api/teaching-units";
 const URL_BASE_SESSIONS = "http://localhost:8080/api/sessions";
 const URL_BASE_PUBLIC_SESSIONS = "http://localhost:8080/api/public-sessions";
 
 export async function getTeachingUnitsRequest(): Promise<TeachingUnitResponse> {
-  return authenticatedGet<TeachingUnitResponse>(
-    URL_BASE_TEACHING_UNITS,
-    "Error al obtener las unidades didácticas"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(URL_BASE_TEACHING_UNITS, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al obtener las unidades didácticas");
+  }
+
+  return await response.json();
 }
 
 export async function getSessionsRequest(): Promise<SessionResponse> {
-  return authenticatedGet<SessionResponse>(
-    URL_BASE_SESSIONS,
-    "Error al obtener las sesiones"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(URL_BASE_SESSIONS, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al obtener las sesiones");
+  }
+
+  return await response.json();
 }
 
 export async function createTeachingUnitRequest(
   body: { courseId: number; title: string; description: string; schedule: string; notes: string }
 ): Promise<CreateTeachingUnitResponse> {
-  return authenticatedPost<CreateTeachingUnitResponse>(URL_BASE_TEACHING_UNITS, body);
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(URL_BASE_TEACHING_UNITS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error en la creación del recurso");
+  }
+
+  return await response.json();
 }
 
 export async function createSessionRequest(
   body: {
-    teachingUnitId: number;
-    title: string;
-    description: string;
-    materials: string;
-    totalDuration: string;
-    date: string;
-    warmUpTime: string;
-    warmUpDescription: string;
-    warmUpObservations: string;
-    mainPartTime: string;
-    mainPartDescription: string;
-    mainPartObservations: string;
-    coolDownTime: string;
-    coolDownDescription: string;
-    coolDownObservations: string;
-    warmUpGraphicUrl?: string | null;
-    mainPartGraphicUrl?: string | null;
-    coolDownGraphicUrl?: string | null;
+    teachingUnitId: number,
+    title: string,
+    description: string,
+    materials: string,
+    totalDuration: string,
+    date: string,
+    warmUpTime: string,
+    warmUpDescription: string,
+    warmUpObservations: string,
+    mainPartTime: string,
+    mainPartDescription: string,
+    mainPartObservations: string,
+    coolDownTime: string,
+    coolDownDescription: string,
+    coolDownObservations: string,
+    warmUpGraphicUrl?: string | null,
+    mainPartGraphicUrl?: string | null,
+    coolDownGraphicUrl?: string | null,
   }
 ): Promise<CreateSessionResponse> {
-  return authenticatedPost<CreateSessionResponse>(URL_BASE_SESSIONS, body);
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(URL_BASE_SESSIONS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error en la creación del recurso");
+  }
+
+  return await response.json();
 }
 
 export async function updateTeachingUnitRequest(
   id: number,
   body: UpdateTeachingUnitRequest
 ): Promise<UpdateTeachingUnitResponse> {
-  return authenticatedPatch<UpdateTeachingUnitResponse>(
-    `${URL_BASE_TEACHING_UNITS}/${id}`,
-    body,
-    "Error al actualizar la unidad didáctica"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_TEACHING_UNITS}/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al actualizar la unidad didáctica");
+  }
+
+  return await response.json();
 }
 
 export async function deleteTeachingUnitRequest(
   id: number
 ): Promise<DeleteTeachingUnitResponse> {
-  return authenticatedDelete<DeleteTeachingUnitResponse>(
-    `${URL_BASE_TEACHING_UNITS}/${id}`,
-    "Error al eliminar la unidad didáctica"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_TEACHING_UNITS}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al eliminar la unidad didáctica");
+  }
+
+  return await response.json();
 }
 
 export async function updateSessionRequest(
   id: number,
   body: UpdateSessionRequest
 ): Promise<UpdateSessionResponse> {
-  return authenticatedPatch<UpdateSessionResponse>(
-    `${URL_BASE_SESSIONS}/${id}`,
-    body,
-    "Error al actualizar la sesión"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_SESSIONS}/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al actualizar la sesión");
+  }
+
+  return await response.json();
 }
 
 export async function deleteSessionRequest(
   id: number
 ): Promise<DeleteSessionResponse> {
-  return authenticatedDelete<DeleteSessionResponse>(
-    `${URL_BASE_SESSIONS}/${id}`,
-    "Error al eliminar la sesión"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_SESSIONS}/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al eliminar la sesión");
+  }
+
+  return await response.json();
 }
 
 export async function updateSessionVisibilityRequest(
   id: number,
   isPublic: boolean
 ): Promise<UpdateSessionVisibilityResponse> {
-  return authenticatedPatch<UpdateSessionVisibilityResponse>(
-    `${URL_BASE_SESSIONS}/${id}/visibility`,
-    { isPublic },
-    "Error al cambiar la visibilidad de la sesión"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_SESSIONS}/${id}/visibility`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ isPublic })
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al cambiar la visibilidad de la sesión");
+  }
+
+  return await response.json();
 }
 
 export async function getPublicSessionsRequest(
   sort: PublicSessionSort
 ): Promise<PublicSessionsResponse> {
-  return authenticatedGet<PublicSessionsResponse>(
-    `${URL_BASE_PUBLIC_SESSIONS}?sort=${sort}`,
-    "Error al obtener las sesiones públicas"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_PUBLIC_SESSIONS}?sort=${sort}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al obtener las sesiones públicas");
+  }
+
+  return await response.json();
 }
 
 export async function getPublicSessionRequest(
   id: number
 ): Promise<PublicSessionDetailResponse> {
-  return authenticatedGet<PublicSessionDetailResponse>(
-    `${URL_BASE_PUBLIC_SESSIONS}/${id}`,
-    "Error al obtener la sesión pública"
-  );
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_PUBLIC_SESSIONS}/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  if (response.status === 401 || response.status === 403) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al obtener la sesión pública");
+  }
+
+  return await response.json();
 }
