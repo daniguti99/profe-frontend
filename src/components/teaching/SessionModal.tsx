@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
 import type { PublicSessionInfo, Session } from "../../components/layout/interfaces/interfaces";
+import { exportSessionPdfRequest } from "../../services/teachingservice";
 
 const SESSION_FIELDS: { key: keyof Session; label: string }[] = [
   { key: "title", label: "Título" },
@@ -41,6 +42,7 @@ interface SessionModalProps {
 export default function SessionModal({ session, onClose, publicInfo, onVisibilityChange }: SessionModalProps) {
   const openerRef = useRef<HTMLElement | null>(null);
   const [saving, setSaving] = useState(false);
+  const [descargando, setDescargando] = useState(false);
   const esPublico = Boolean(publicInfo);
 
   useEffect(() => {
@@ -90,6 +92,24 @@ export default function SessionModal({ session, onClose, publicInfo, onVisibilit
       await onVisibilityChange(hacerPublica);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    setDescargando(true);
+    try {
+      await exportSessionPdfRequest(session.id);
+    } catch (error) {
+      await Swal.fire({
+        title: "No se pudo descargar el PDF",
+        text: error instanceof Error ? error.message : "Inténtalo de nuevo más tarde.",
+        icon: "error",
+        background: "#16233A",
+        color: "#F6F5F1",
+        confirmButtonColor: "#FF7A3C",
+      });
+    } finally {
+      setDescargando(false);
     }
   };
 
@@ -170,28 +190,25 @@ export default function SessionModal({ session, onClose, publicInfo, onVisibilit
         </div>
 
         <div className="session-modal-footer">
-          {publicInfo ? (
+          <button
+            className="session-modal-download"
+            onClick={handleDownloadPdf}
+            disabled={descargando}
+          >
+            {descargando ? "Generando PDF..." : "Descargar PDF"}
+          </button>
+          {!publicInfo && onVisibilityChange && (
             <button
-              className="session-modal-download"
-              disabled
-              title="Próximamente"
+              className={`session-modal-visibility ${session.isPublic ? "session-modal-visibility-danger" : ""}`}
+              onClick={handleVisibility}
+              disabled={saving}
             >
-              Descargar PDF (próximamente)
+              {saving
+                ? "Guardando..."
+                : session.isPublic
+                  ? "Despublicar"
+                  : "Publicar"}
             </button>
-          ) : (
-            onVisibilityChange && (
-              <button
-                className={`session-modal-visibility ${session.isPublic ? "session-modal-visibility-danger" : ""}`}
-                onClick={handleVisibility}
-                disabled={saving}
-              >
-                {saving
-                  ? "Guardando..."
-                  : session.isPublic
-                    ? "Despublicar"
-                    : "Publicar"}
-              </button>
-            )
           )}
           <button className="session-modal-done" onClick={handleClose}>
             Cerrar

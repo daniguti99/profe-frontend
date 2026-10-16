@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36" fill="none">
+  <!-- Fondo Naranja Acción -->
+  <rect width="36" height="36" rx="8" fill="#FF7A3C"/>
+  
+  <!-- Trazo dinámico de la P -->
+  <path d="M12 9.5H19.5C22.5376 9.5 25 11.9624 25 15C25 18.0376 22.5376 20.5 19.5 20.5H16V26.5" 
+        stroke="#16233A" 
+        stroke-width="3.2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+        
+  <!-- Línea de acento/impulso deportivo -->
+  <path d="M9.5 26.5L12 20.5" 
+        stroke="#16233A" 
+        stroke-width="3.2" 
+        stroke-linecap="round"/>
+</svg>

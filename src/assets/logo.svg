@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" width="240" height="48" fill="none">
+  <!-- Isotipo -->
+  <g transform="translate(4, 4)">
+    <!-- Base naranja -->
+    <rect width="40" height="40" rx="10" fill="#FF7A3C"/>
+    <!-- P estilizada en azul tinta oscuro -->
+    <path d="M14 11H22C25.3137 11 28 13.6863 28 17C28 20.3137 25.3137 23 22 23H18V29" 
+          stroke="#16233A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M11 29L14 23" stroke="#16233A" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Texto "ProFE" en Blanco / Naranja -->
+  <text x="56" y="32" 
+        font-family="'Space Grotesk', 'Inter', -apple-system, sans-serif" 
+        font-weight="700" 
+        font-size="28" 
+        letter-spacing="-0.01em" 
+        fill="#F6F5F1">Pro<tspan fill="#FF7A3C">FE</tspan></text>
+</svg>

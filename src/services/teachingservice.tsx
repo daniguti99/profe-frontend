@@ -389,6 +389,96 @@ export async function getPublicSessionsRequest(
   return await response.json();
 }
 
+/**
+ * Descarga una sesión en formato PDF.
+ *
+ * El backend genera el documento y fija el nombre de archivo en la cabecera
+ * `Content-Disposition`; aquí se lee ese nombre (con su variantes `filename*`)
+ * y se dispara la descarga en el navegador. La petición no lleva `Content-Type`
+ * porque no se envía cuerpo.
+ *
+ * @param id identificador de la sesión a exportar
+ * @returns el nombre del archivo descargado
+ */
+export async function exportSessionPdfRequest(id: number): Promise<string> {
+  const token = getAuthToken();
+  let response: Response;
+
+  try {
+    response = await fetch(`${URL_BASE_SESSIONS}/${id}/export/pdf`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+  } catch {
+    throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
+  }
+
+  // 401: token inválido. El 403 de este endpoint significa "sesión privada ajena"
+  // y no debe cerrar la sesión, así que aquí solo caduca en 401.
+  if (response.status === 401) {
+    expireSession();
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+
+    if (errorData?.error) {
+      throw new Error(errorData.error);
+    }
+
+    throw new Error("Error al exportar la sesión en PDF");
+  }
+
+  const blob = await response.blob();
+  const filename = readFilename(response.headers.get("Content-Disposition"), id);
+  downloadBlob(blob, filename);
+
+  return filename;
+}
+
+/**
+ * Lee el nombre de archivo que ha fijado el backend en `Content-Disposition`,
+ * priorizando la variante `filename*` (UTF-8) sobre la simple `filename`.
+ */
+function readFilename(disposition: string | null, id: number): string {
+  if (disposition) {
+    const utf8 = /filename\*\s*=\s*(?:UTF-8'')?([^;]+)/i.exec(disposition);
+    if (utf8?.[1]) return cleanFilename(utf8[1]);
+
+    const plain = /filename\s*=\s*"([^"]+)"/i.exec(disposition);
+    if (plain?.[1]) return plain[1];
+  }
+
+  return `sesion-${id}.pdf`;
+}
+
+function cleanFilename(value: string): string {
+  try {
+    return decodeURIComponent(value.trim());
+  } catch {
+    return value.trim();
+  }
+}
+
+/**
+ * Crea un enlace temporal con el blob y lo pulsa para que el navegador abra el
+ * diálogo de descarga; después libera el recurso.
+ */
+function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+}
+
 export async function getPublicSessionRequest(
   id: number
 ): Promise<PublicSessionDetailResponse> {

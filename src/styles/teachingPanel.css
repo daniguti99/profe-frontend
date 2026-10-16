@@ -490,7 +490,7 @@
     transform: translateY(-1px);
 }
 
-/* Botón de visibilidad (modo propietario) y descarga deshabilitada (modo público) */
+/* Botón de descarga a PDF y botón de visibilidad (solo en modo propietario) */
 
 .session-modal-visibility,
 .session-modal-download {
@@ -523,9 +523,19 @@
 }
 
 .session-modal-download {
-    color: var(--color-gray-600);
-    background-color: var(--color-gray-100);
+    color: var(--color-ink);
+    background-color: transparent;
     border: 1px solid var(--color-gray-300);
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.session-modal-download:hover:not(:disabled) {
+    background-color: var(--color-gray-100);
+}
+
+.session-modal-download:disabled {
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
@@ -610,6 +620,7 @@
 
 .session-modal-close:focus-visible,
 .session-modal-done:focus-visible,
+.session-modal-download:focus-visible,
 .session-modal-visibility:focus-visible,
 .panel-retry:focus-visible {
     outline: 2px solid var(--color-ink);
@@ -645,5 +656,9 @@
 
     .session-modal-footer {
         justify-content: flex-end;
+    }
+
+    .session-modal-download {
+        margin-right: 0;
     }
 }

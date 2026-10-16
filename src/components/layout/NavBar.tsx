@@ -36,8 +36,7 @@ export default function Navbar() {
         <header className="navbar">
             <div className="navbar-inner">
                 <Link to="/" className="navbar-brand" onClick={closeMenu}>
-                    <span className="navbar-brand-mark">P</span>
-                    <span className="navbar-brand-text">ProFE</span>
+                    <img src="./src/assets/logo.svg" alt="Logo ProFE" />
                 </Link>
 
                 <button
