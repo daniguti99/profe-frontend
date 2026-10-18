@@ -191,6 +191,35 @@
     border-color: var(--color-chalk);
 }
 
+/* Cuenta del usuario autenticado: avatar (foto o inicial) + cierre de sesión */
+.navbar-account {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.navbar-avatar {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--color-action);
+    background-color: var(--color-gray-600);
+    color: var(--color-chalk);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--font-size-small);
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.navbar-avatar-inicial {
+    text-transform: uppercase;
+}
+
 @media (min-width: 768px) {
     .navbar-toggle {
         display: none;

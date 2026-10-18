@@ -343,6 +343,7 @@ export default function TeachingPanel() {
       {level === "sessions" && selectedUnit && (
         <SessionsLevel
           sessions={filteredSessions}
+          unitId={selectedUnit.id}
           unitTitle={selectedUnit.title}
           loading={loading.sessions}
           error={error.sessions}

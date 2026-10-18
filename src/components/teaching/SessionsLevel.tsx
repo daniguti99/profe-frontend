@@ -6,6 +6,7 @@ import { deleteSessionRequest } from "../../services/teachingservice";
 
 interface SessionsLevelProps {
   sessions: Session[];
+  unitId: number;
   unitTitle: string;
   loading: boolean;
   error: string;
@@ -15,17 +16,16 @@ interface SessionsLevelProps {
   onEdit: (session: Session) => void;
 }
 
-export default function SessionsLevel({ sessions, unitTitle, loading, error, onSelect, onRetry, onDeleted, onEdit }: SessionsLevelProps) {
+export default function SessionsLevel({ sessions, unitId, unitTitle, loading, error, onSelect, onRetry, onDeleted, onEdit }: SessionsLevelProps) {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const teachingUnitId = sessions.length > 0 ? sessions[0].teachingUnitId : undefined;
 
   const createSessionButton = isAuthenticated ? (
     <button
       key="create-session"
       className="panel-card"
       style={{ marginBottom: "var(--space-8)", borderLeftColor: "#FF7A3C" }}
-      onClick={() => navigate(`/teachingpanel/crear-sesion/${teachingUnitId}`)}
+      onClick={() => navigate(`/teachingpanel/crear-sesion/${unitId}`)}
     >
       <span className="panel-card-kicker">Crear sesión</span>
     </button>

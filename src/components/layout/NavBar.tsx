@@ -6,7 +6,10 @@ import "../../styles/navBar.css";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const { isAuthenticated, logout } = useAuth();
+    // URL de la foto que ha fallado al cargar; se compara con la actual para
+    // volver a la inicial sin necesidad de un efecto que resetee el estado
+    const [fotoFallida, setFotoFallida] = useState<string | null>(null);
+    const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
     const closeMenu = () => setIsOpen(false);
 
@@ -82,9 +85,28 @@ export default function Navbar() {
                             >
                                 Explorar
                             </NavLink>
-                            <button className="navbar-logout" onClick={handleLogout}>
-                                Cerrar sesión
-                            </button>
+                            <div className="navbar-account">
+                                {user?.photo && fotoFallida !== user.photo ? (
+                                    <img
+                                        className="navbar-avatar"
+                                        src={user.photo}
+                                        alt={`Foto de perfil de ${user.username}`}
+                                        onError={() => setFotoFallida(user.photo)}
+                                    />
+                                ) : (
+                                    <span
+                                        className="navbar-avatar navbar-avatar-inicial"
+                                        title={user?.username}
+                                        aria-hidden="true"
+                                    >
+                                        {user?.photo ? user.username.charAt(0).toUpperCase() : user?.username.charAt(0).toUpperCase()}
+                                    </span>
+                                )}
+
+                                <button className="navbar-logout" onClick={handleLogout}>
+                                    Cerrar sesión
+                                </button>
+                            </div>
                         </>
                     ) : (
                         <>

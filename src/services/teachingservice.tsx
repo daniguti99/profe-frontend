@@ -138,9 +138,6 @@ export async function createSessionRequest(
     coolDownTime: string,
     coolDownDescription: string,
     coolDownObservations: string,
-    warmUpGraphicUrl?: string | null,
-    mainPartGraphicUrl?: string | null,
-    coolDownGraphicUrl?: string | null,
   }
 ): Promise<CreateSessionResponse> {
   const token = getAuthToken();
@@ -356,18 +353,23 @@ export async function updateSessionVisibilityRequest(
 }
 
 export async function getPublicSessionsRequest(
-  sort: PublicSessionSort
+  sort: PublicSessionSort,
+  page: number,
+  size: number = 10
 ): Promise<PublicSessionsResponse> {
   const token = getAuthToken();
   let response: Response;
 
   try {
-    response = await fetch(`${URL_BASE_PUBLIC_SESSIONS}?sort=${sort}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`
+    response = await fetch(
+      `${URL_BASE_PUBLIC_SESSIONS}?sort=${sort}&page=${page}&size=${size}`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       }
-    });
+    );
   } catch {
     throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
   }

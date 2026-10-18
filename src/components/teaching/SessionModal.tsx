@@ -11,15 +11,12 @@ const SESSION_FIELDS: { key: keyof Session; label: string }[] = [
   { key: "date", label: "Fecha" },
   { key: "warmUpTime", label: "Tiempo de calentamiento" },
   { key: "warmUpDescription", label: "Descripción del calentamiento" },
-  { key: "warmUpGraphicUrl", label: "Gráfico del calentamiento" },
   { key: "warmUpObservations", label: "Observaciones del calentamiento" },
   { key: "mainPartTime", label: "Tiempo de parte principal" },
   { key: "mainPartDescription", label: "Descripción de parte principal" },
-  { key: "mainPartGraphicUrl", label: "Gráfico de parte principal" },
   { key: "mainPartObservations", label: "Observaciones de parte principal" },
   { key: "coolDownTime", label: "Tiempo de vuelta a la calma" },
   { key: "coolDownDescription", label: "Descripción de vuelta a la calma" },
-  { key: "coolDownGraphicUrl", label: "Gráfico de vuelta a la calma" },
   { key: "coolDownObservations", label: "Observaciones de vuelta a la calma" },
 ];
 
@@ -28,8 +25,8 @@ interface SessionModalProps {
   onClose: () => void;
   /**
    * Datos de lectura de una sesión pública (autor y contadores). Su presencia
-   * activa el modo público: oculta los gráficos, muestra el autor y las
-   * métricas, y sustituye el botón de visibilidad por la descarga a PDF.
+   * activa el modo público: muestra el autor y las métricas, y sustituye el
+   * botón de visibilidad por la descarga a PDF.
    */
   publicInfo?: PublicSessionInfo;
   /**
@@ -43,7 +40,6 @@ export default function SessionModal({ session, onClose, publicInfo, onVisibilit
   const openerRef = useRef<HTMLElement | null>(null);
   const [saving, setSaving] = useState(false);
   const [descargando, setDescargando] = useState(false);
-  const esPublico = Boolean(publicInfo);
 
   useEffect(() => {
     openerRef.current = document.activeElement as HTMLElement;
@@ -113,20 +109,16 @@ export default function SessionModal({ session, onClose, publicInfo, onVisibilit
     }
   };
 
-  // En modo público no se muestran los gráficos (son URLs internas).
-  const visible = (fields: typeof SESSION_FIELDS) =>
-    esPublico ? fields.filter((f) => !f.key.toString().endsWith("GraphicUrl")) : fields;
-
   const generalFields = SESSION_FIELDS.slice(0, 5);
-  const warmUpFields = SESSION_FIELDS.slice(5, 9);
-  const mainPartFields = SESSION_FIELDS.slice(9, 13);
-  const coolDownFields = SESSION_FIELDS.slice(13, 17);
+  const warmUpFields = SESSION_FIELDS.slice(5, 8);
+  const mainPartFields = SESSION_FIELDS.slice(8, 11);
+  const coolDownFields = SESSION_FIELDS.slice(11, 14);
 
   const renderGroup = (title: string, fields: typeof SESSION_FIELDS) => (
     <div className="session-modal-group">
       <h4 className="session-modal-group-title">{title}</h4>
       <dl className="session-modal-fields">
-        {visible(fields).map((field) => (
+        {fields.map((field) => (
           <div key={field.key} className="session-modal-field">
             <dt className="session-modal-label">{field.label}</dt>
             <dd className="session-modal-value">{session[field.key] ?? "—"}</dd>

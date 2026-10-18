@@ -18,10 +18,6 @@ export const createSessionSchema = z.object({
   coolDownTime: z.string().nonempty("El tiempo de vuelta a la calma es obligatorio"),
   coolDownDescription: z.string().nonempty("La descripción de vuelta a la calma es obligatoria"),
   coolDownObservations: z.string().nonempty("Las observaciones de vuelta a la calma son obligatorias"),
-  // Campos opcionales (gráficos)
-  warmUpGraphicUrl: z.string().nullable().optional(),
-  mainPartGraphicUrl: z.string().nullable().optional(),
-  coolDownGraphicUrl: z.string().nullable().optional(),
 });
 
 export type CreateSessionFormValues = z.infer<typeof createSessionSchema>;

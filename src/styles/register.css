@@ -226,6 +226,51 @@
   color: var(--color-ink);
 }
 
+/* Foto de perfil: vista previa circular + acciones */
+.photo-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.photo-preview {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-gray-300);
+  background-color: var(--color-gray-100);
+  object-fit: cover;
+}
+
+.photo-preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-600);
+}
+
+/* El input de archivo real queda oculto: el botón visible es su label */
+.photo-input {
+  display: none;
+}
+
+.photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.photo-upload,
+.photo-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-small);
+  cursor: pointer;
+}
+
 @media (min-width: 768px) {
   .auth-right {
     display: block;

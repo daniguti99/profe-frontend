@@ -42,15 +42,12 @@ export default function CreateSessionPage() {
             date: session.date ?? undefined,
             warmUpTime: session.warmUpTime ?? undefined,
             warmUpDescription: session.warmUpDescription ?? undefined,
-            warmUpGraphicUrl: session.warmUpGraphicUrl ?? undefined,
             warmUpObservations: session.warmUpObservations ?? undefined,
             mainPartTime: session.mainPartTime ?? undefined,
             mainPartDescription: session.mainPartDescription ?? undefined,
-            mainPartGraphicUrl: session.mainPartGraphicUrl ?? undefined,
             mainPartObservations: session.mainPartObservations ?? undefined,
             coolDownTime: session.coolDownTime ?? undefined,
             coolDownDescription: session.coolDownDescription ?? undefined,
-            coolDownGraphicUrl: session.coolDownGraphicUrl ?? undefined,
             coolDownObservations: session.coolDownObservations ?? undefined,
           });
         }
@@ -83,15 +80,12 @@ export default function CreateSessionPage() {
           date: data.date,
           warmUpTime: data.warmUpTime,
           warmUpDescription: data.warmUpDescription,
-          warmUpGraphicUrl: data.warmUpGraphicUrl ?? null,
           warmUpObservations: data.warmUpObservations,
           mainPartTime: data.mainPartTime,
           mainPartDescription: data.mainPartDescription,
-          mainPartGraphicUrl: data.mainPartGraphicUrl ?? null,
           mainPartObservations: data.mainPartObservations,
           coolDownTime: data.coolDownTime,
           coolDownDescription: data.coolDownDescription,
-          coolDownGraphicUrl: data.coolDownGraphicUrl ?? null,
           coolDownObservations: data.coolDownObservations,
         });
 
@@ -104,8 +98,23 @@ export default function CreateSessionPage() {
           color: "#F6F5F1",
         });
       } else {
+        const unidadId = Number(teachingUnitId);
+
+        // Defensa: si la URL no lleva una unidad válida, no se manda null al backend
+        if (!Number.isInteger(unidadId) || unidadId <= 0) {
+          await Swal.fire({
+            title: "Error",
+            text: "No se ha podido identificar la unidad didáctica. Vuelve al panel e inténtalo de nuevo.",
+            icon: "error",
+            confirmButtonColor: "#FF7A3C",
+            background: "#16233A",
+            color: "#F6F5F1",
+          });
+          return;
+        }
+
         await createSessionRequest({
-          teachingUnitId: Number(teachingUnitId),
+          teachingUnitId: unidadId,
           title: data.title,
           description: data.description,
           materials: data.materials,
@@ -120,9 +129,6 @@ export default function CreateSessionPage() {
           coolDownTime: data.coolDownTime,
           coolDownDescription: data.coolDownDescription,
           coolDownObservations: data.coolDownObservations,
-          warmUpGraphicUrl: data.warmUpGraphicUrl ?? null,
-          mainPartGraphicUrl: data.mainPartGraphicUrl ?? null,
-          coolDownGraphicUrl: data.coolDownGraphicUrl ?? null,
         });
 
         await Swal.fire({
@@ -269,13 +275,6 @@ export default function CreateSessionPage() {
                   />
                   {errors.warmUpObservations && <span className="error">{String(errors.warmUpObservations.message)}</span>}
                 </div>
-                <div className="form-group">
-                  <label>Gráfico del calentamiento (URL)</label>
-                  <input
-                    type="text"
-                    {...register("warmUpGraphicUrl")}
-                  />
-                </div>
               </div>
             </div>
 
@@ -309,13 +308,6 @@ export default function CreateSessionPage() {
                   />
                   {errors.mainPartObservations && <span className="error">{String(errors.mainPartObservations.message)}</span>}
                 </div>
-                <div className="form-group">
-                  <label>Gráfico de parte principal (URL)</label>
-                  <input
-                    type="text"
-                    {...register("mainPartGraphicUrl")}
-                  />
-                </div>
               </div>
             </div>
 
@@ -348,13 +340,6 @@ export default function CreateSessionPage() {
                     required={!isEditMode}
                   />
                   {errors.coolDownObservations && <span className="error">{String(errors.coolDownObservations.message)}</span>}
-                </div>
-                <div className="form-group">
-                  <label>Gráfico de vuelta a la calma (URL)</label>
-                  <input
-                    type="text"
-                    {...register("coolDownGraphicUrl")}
-                  />
                 </div>
               </div>
             </div>

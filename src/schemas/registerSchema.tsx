@@ -37,6 +37,20 @@ export function createRegisterSchema() {
       locality: z
         .string()
         .min(2, "La localidad debe tener mínimo 2 caracteres"),
+
+      // Foto de perfil: opcional, y solo JPG, PNG o WEBP de hasta 2 MB,
+      // las mismas reglas que valida el backend antes de subirla.
+      photo: z
+        .instanceof(File)
+        .optional()
+        .refine(
+          (file) => !file || ["image/jpeg", "image/png", "image/webp"].includes(file.type),
+          { message: "La foto debe ser una imagen JPG, PNG o WEBP" }
+        )
+        .refine(
+          (file) => !file || file.size <= 2 * 1024 * 1024,
+          { message: "La foto no puede superar 2 MB" }
+        ),
     })
     .refine((data) => data.email === data.confirmEmail, {
       message: "Los emails no coinciden",
@@ -48,4 +62,9 @@ export function createRegisterSchema() {
     });
 }
 
+/**
+ * Campos del formulario de registro, sin la foto: la imagen viaja como parte
+ * aparte del multipart, nunca dentro del JSON de `data`.
+ */
 export type RegisterForm = z.infer<ReturnType<typeof createRegisterSchema>>;
+export type RegisterData = Omit<RegisterForm, "photo">;

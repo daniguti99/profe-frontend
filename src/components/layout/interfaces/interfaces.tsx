@@ -62,15 +62,12 @@ export interface Session {
     date: string | null;
     warmUpTime: string | null;
     warmUpDescription: string | null;
-    warmUpGraphicUrl: string | null;
     warmUpObservations: string | null;
     mainPartTime: string | null;
     mainPartDescription: string | null;
-    mainPartGraphicUrl: string | null;
     mainPartObservations: string | null;
     coolDownTime: string | null;
     coolDownDescription: string | null;
-    coolDownGraphicUrl: string | null;
     coolDownObservations: string | null;
     active: boolean;
     isPublic: boolean;
@@ -103,15 +100,12 @@ export interface CreateSessionResponse {
     date: string;
     warmUpTime: string;
     warmUpDescription: string;
-    warmUpGraphicUrl: string | null;
     warmUpObservations: string;
     mainPartTime: string;
     mainPartDescription: string;
-    mainPartGraphicUrl: string | null;
     mainPartObservations: string;
     coolDownTime: string;
     coolDownDescription: string;
-    coolDownGraphicUrl: string | null;
     coolDownObservations: string;
     active: boolean;
 }
@@ -124,15 +118,12 @@ export interface UpdateSessionRequest {
     date?: string;
     warmUpTime?: string;
     warmUpDescription?: string;
-    warmUpGraphicUrl?: string | null;
     warmUpObservations?: string;
     mainPartTime?: string;
     mainPartDescription?: string;
-    mainPartGraphicUrl?: string | null;
     mainPartObservations?: string;
     coolDownTime?: string;
     coolDownDescription?: string;
-    coolDownGraphicUrl?: string | null;
     coolDownObservations?: string;
 }
 
@@ -198,6 +189,12 @@ export type PublicSessionInfo = Pick<PublicSession, "author" | "views" | "downlo
 export interface PublicSessionsResponse {
     sessions: PublicSessionSummary[];
     message: string;
+    /** Página devuelta (base 0). */
+    page: number;
+    /** Tamaño de página aplicado. */
+    size: number;
+    /** `true` si quedan más sesiones por devolver. */
+    hasMore: boolean;
 }
 
 export interface PublicSessionDetailResponse {

@@ -1,18 +1,30 @@
-import type { RegisterForm } from "../schemas/registerSchema";
+import type { RegisterData } from "../schemas/registerSchema";
 import type { LoginForm } from "../schemas/loginSchema";
 
 const URL_BASE = "http://localhost:8080/api/auth";
 
-export async function registerRequest(data: RegisterForm) {
+export async function registerRequest(data: RegisterData, photo?: File) {
+  const formData = new FormData();
+
+  // La parte `data` lleva su Content-Type explícito: sin `application/json`
+  // Spring no resolvería el JSON con Jackson. La foto viaja aparte y solo si
+  // el usuario ha elegido imagen, porque es opcional.
+  formData.append(
+    "data",
+    new Blob([JSON.stringify(data)], { type: "application/json" })
+  );
+
+  if (photo) {
+    formData.append("photo", photo);
+  }
+
   let response: Response;
 
   try {
+    // Sin cabecera Content-Type a mano: el navegador pone el boundary del multipart
     response = await fetch(`${URL_BASE}/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+      body: formData
     });
   } catch {
     throw new Error("No se pudo conectar con el servidor. Comprueba tu conexión.");
@@ -28,7 +40,7 @@ export async function registerRequest(data: RegisterForm) {
     throw new Error("Error desconocido en el registro");
   }
 
-  return await response.text();
+  return await response.json();
 }
 
 export interface UserInfo {
@@ -36,6 +48,7 @@ export interface UserInfo {
   username: string;
   email: string;
   role: string;
+  photo: string | null;
 }
 
 export interface LoginResponse {

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Swal from "sweetalert2";
-import { Eye, EyeOff } from "lucide-react";
+import { Camera, Eye, EyeOff, ImagePlus, Trash2 } from "lucide-react";
 
 import { registerRequest } from "../services/authservice";
 import { createRegisterSchema, type RegisterForm } from "../schemas/registerSchema";
@@ -17,24 +17,39 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Vista previa de la foto elegida. La URL del objeto se crea y se revoca en
+  // el propio evento de selección, sin efectos: solo cambia al elegir o quitar.
+  const [preview, setPreview] = useState<{ file: File; url: string } | null>(null);
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(createRegisterSchema()),
     mode: "onChange",
   });
 
+  function actualizarPreview(file?: File) {
+    setPreview((anterior) => {
+      if (anterior) {
+        URL.revokeObjectURL(anterior.url);
+      }
+      return file ? { file, url: URL.createObjectURL(file) } : null;
+    });
+  }
+
   async function onSubmit(data: RegisterForm) {
     if (loading) return;
     setLoading(true);
     setBackendError("");
 
+    // La foto no viaja en el JSON: el servicio la manda como parte del multipart
+    const { photo: foto, ...datos } = data;
+
     try {
-      await registerRequest({
-        ...data
-      });
+      await registerRequest(datos, foto);
 
       await Swal.fire({
         title: "Registro exitoso",
@@ -153,6 +168,63 @@ export default function Register() {
                 <label>Localidad</label>
                 <input type="text" {...register("locality")} disabled={loading} />
                 {errors.locality && <span className="error">{errors.locality.message}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="photo-input">Foto de perfil (opcional)</label>
+
+                <div className="photo-field">
+                  {preview ? (
+                    <img
+                      className="photo-preview"
+                      src={preview.url}
+                      alt="Vista previa de la foto de perfil"
+                    />
+                  ) : (
+                    <span className="photo-preview photo-preview-empty" aria-hidden="true">
+                      <Camera size={26} />
+                    </span>
+                  )}
+
+                  <div className="photo-actions">
+                    <label className="btn-secondary photo-upload" htmlFor="photo-input">
+                      <ImagePlus size={16} />
+                      {preview ? "Cambiar foto" : "Elegir foto"}
+                    </label>
+
+                    <input
+                      id="photo-input"
+                      className="photo-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      disabled={loading}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        setValue("photo", file, { shouldValidate: true, shouldDirty: true });
+                        actualizarPreview(file);
+                        // Se vacía el input para permitir volver a elegir el mismo archivo
+                        event.target.value = "";
+                      }}
+                    />
+
+                    {preview && (
+                      <button
+                        type="button"
+                        className="btn-secondary photo-remove"
+                        onClick={() => {
+                          setValue("photo", undefined, { shouldValidate: true, shouldDirty: true });
+                          actualizarPreview(undefined);
+                        }}
+                        disabled={loading}
+                      >
+                        <Trash2 size={16} />
+                        Quitar foto
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {errors.photo && <span className="error">{errors.photo.message}</span>}
               </div>
 
               <button type="submit" className="btn-login" disabled={loading}>
