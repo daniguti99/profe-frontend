@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
+import logoUrl from "../../assets/logo.svg";
 import "../../styles/navBar.css";
 
 export default function Navbar() {
@@ -39,7 +40,7 @@ export default function Navbar() {
         <header className="navbar">
             <div className="navbar-inner">
                 <Link to="/" className="navbar-brand" onClick={closeMenu}>
-                    <img src="./src/assets/logo.svg" alt="Logo ProFE" />
+                    <img src={logoUrl} alt="Logo ProFE" />
                 </Link>
 
                 <button
