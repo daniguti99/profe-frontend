@@ -1,9 +1,10 @@
 import type { Cycle, Course } from "../components/layout/interfaces/interfaces";
+import { API_URL } from "../config";
 
 import { expireSession, getAuthToken } from "./http";
 
-const URL_BASE_CYCLES = "http://localhost:8080/api/cycles";
-const URL_BASE_COURSES = "http://localhost:8080/api/courses";
+const URL_BASE_CYCLES = `${API_URL}/api/cycles`;
+const URL_BASE_COURSES = `${API_URL}/api/courses`;
 
 export async function getCyclesRequest(): Promise<Cycle[]> {
   const token = getAuthToken();

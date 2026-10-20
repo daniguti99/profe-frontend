@@ -1,7 +1,8 @@
 import type { RegisterData } from "../schemas/registerSchema";
 import type { LoginForm } from "../schemas/loginSchema";
+import { API_URL } from "../config";
 
-const URL_BASE = "http://localhost:8080/api/auth";
+const URL_BASE = `${API_URL}/api/auth`;
 
 export async function registerRequest(data: RegisterData, photo?: File) {
   const formData = new FormData();

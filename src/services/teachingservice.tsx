@@ -14,12 +14,13 @@ import type {
   PublicSessionDetailResponse,
   UpdateSessionVisibilityResponse,
 } from "../components/layout/interfaces/interfaces";
+import { API_URL } from "../config";
 
 import { expireSession, getAuthToken } from "./http";
 
-const URL_BASE_TEACHING_UNITS = "http://localhost:8080/api/teaching-units";
-const URL_BASE_SESSIONS = "http://localhost:8080/api/sessions";
-const URL_BASE_PUBLIC_SESSIONS = "http://localhost:8080/api/public-sessions";
+const URL_BASE_TEACHING_UNITS = `${API_URL}/api/teaching-units`;
+const URL_BASE_SESSIONS = `${API_URL}/api/sessions`;
+const URL_BASE_PUBLIC_SESSIONS = `${API_URL}/api/public-sessions`;
 
 export async function getTeachingUnitsRequest(): Promise<TeachingUnitResponse> {
   const token = getAuthToken();
